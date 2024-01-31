@@ -10,6 +10,7 @@
     <ItemGroup>
       <PackageReference Include="Bogus" Version="35.4.0" />
       <PackageReference Include="Npgsql" Version="8.0.1" />
+      <PackageReference Include="Telegram.Bot" Version="20.0.0-alpha.1" />
     </ItemGroup>
 
 </Project>

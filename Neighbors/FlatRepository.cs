@@ -21,7 +21,7 @@ public class FlatRepository
 
         return count;
     }
-    public Flat GetFlat(int flatNumber)
+    public Flat? GetFlat(int flatNumber)
     {
         using var connection = new NpgsqlConnection(connectionString);
         connection.Open();

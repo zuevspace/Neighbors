@@ -1,16 +1,20 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.SqlTypes;
+using System.Xml;
+
 namespace Neighbors;
 
 public class Flat
 {
-    public int NumberFlat { get; init; } //Квартира
-    public int NumberFloors { get; init; } //Этаж
-    public string? NameLodger { get; init; } //Имя жильца
-    public string? PhoneNumber { get; init; } //Номер телефона
-    public void PrintInfo()
+    public int NumberFlat { get; set; }
+    public int NumberFloors { get; set; }
+    public string? NameLodger { get; set; }
+    public string? PhoneNumber { get; set; }
+    public string StringInfoFlat()
     {
-        Console.WriteLine($"Номер квартиры: {NumberFlat}\n" +
-                          $"Этаж: {NumberFloors}\n" +
-                          $"Имя жильца: {NameLodger}\n" +
-                          $"Номер телефона: {PhoneNumber}\n");
+        return $"Имя жильца: {NameLodger}\n" +
+               $"Этаж: {NumberFloors}\n" +
+               $"Номер квартиры: {NumberFlat}\n" +
+               $"Номер телефона: {PhoneNumber}\n";
     }
 }

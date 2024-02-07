@@ -1,10 +1,12 @@
-﻿using PRTelegramBot.Core;
+﻿using Neighbors.Database;
+using PRTelegramBot.Core;
 
+namespace Neighbors;
 class Program
 {
     static async Task Main()
     {
-        var path = @"/Users/zuev/SourceTree/Neighbors/Neighbors/TOKEN.txt";
+        const string path = @"/Users/zuev/SourceTree/Neighbors/Neighbors/TOKEN.txt";
         string token;
         using (var reader = new StreamReader(path))
         {
@@ -15,16 +17,12 @@ class Program
         {
             options.Token = token;
             options.ClearUpdatesOnStart = true;
-            // Если есть хоть 1 идентификатор телеграм пользователя, могут пользоваться только эти пользователи
-            options.WhiteListUsers = new List<long>() { };
-            // Идентификатор администраторов бота
-            options.Admins = new List<long>() { };
+            options.WhiteListUsers = new List<long>() { 132493648, 663256732, 1417023281};
+            options.Admins = new List<long>() { 132493648, 1417023281 };
             options.BotId = 0;
         });
- 
-        //Подписка на простые логи
+        
         telegram.OnLogCommon += TelegramOnLogCommon;
-        //Подписка на логи с ошибками
         telegram.OnLogError += TelegramOnLogError;
         
         await telegram.Start();

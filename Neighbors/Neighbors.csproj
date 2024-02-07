@@ -8,11 +8,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Bogus" Version="35.4.0" />
-      <PackageReference Include="Npgsql" Version="8.0.1" />
+      <PackageReference Include="Dapper" Version="2.1.28" />
       <PackageReference Include="PRTelegramBot" Version="0.5.5" />
+      <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
       <PackageReference Include="Telegram.Bot" Version="20.0.0-alpha.1" />
     </ItemGroup>
 
+
+
+    <ItemGroup>
+      <None Remove="Database\neighbors.sqlite" />
+      <Content Include="Database\neighbors.sqlite">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 
 </Project>

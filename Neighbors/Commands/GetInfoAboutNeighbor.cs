@@ -1,5 +1,10 @@
+using Neighbors.Database;
 using PRTelegramBot.Attributes;
 using PRTelegramBot.Extensions;
+using PRTelegramBot.InlineButtons;
+using PRTelegramBot.Interface;
+using PRTelegramBot.Models;
+using PRTelegramBot.Utils;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -7,45 +12,53 @@ namespace Neighbors.Commands;
 
 public class GetInfoAboutNeighbor
 {
-    [ReplyMenuHandler("/search")]
-    public static async Task GetHouseStatistics2(ITelegramBotClient botClient, Update update)
+    [ReplyMenuHandler("Найти соседа","Найти","Поиск","Квартира")]
+    [SlashHandler("/search")]
+    public static async Task GetHouseStatistics(ITelegramBotClient botClient, Update update)
     {
         var message = "Напишите номер квартиры:";
         update.RegisterStepHandler(new StepTelegram(StepNumFlat, new StepCache()));
         await PRTelegramBot.Helpers.Message.Send(botClient, update, message);
     }
     
-    /// <summary>
-    /// При написание любого текста сообщения или нажатие на любую кнопку из reply для пользователя будет выполнен этот метод.
-    /// Метод регистрирует следующий шаг с максимальным времени выполнения
-    /// </summary>
     public static async Task StepNumFlat(ITelegramBotClient botClient, Update update)
     {
-        var connString = "host=localhost;username=postgres;password=8888;database=postgres";
-        var repository = new FlatRepository(connString);
+        //var connString = "host=localhost;username=postgres;password=8888;database=postgres";
+        const string connectionString = "Data Source=neighbors.sqlite";
+        var repository = new FlatRepository(connectionString);
         
-        var num = int.Parse(update.Message.Text);
-        var flat = repository.GetFlat(num);
+        var pars = int.TryParse(update.Message.Text, out var num);
+
+        var flat = AccessSqliteData.SearchFlat(num);//repository.GetFlat(num);
         var msg = "";
         
-        if (flat != null)
+        if (pars && flat != null)
         {
-            msg = $"Номер квартиры: {flat.NumberFlat}\n" +
-                $"Этаж: {flat.NumberFloors}\n" +
-                $"Имя жильца: {flat.NameLodger}\n" +
-                $"Номер телефона: {flat.PhoneNumber}";
+            msg = flat.StringInfoFlat();
         }
         else
         {
             msg = "Квартира не найдена";
         }
         
+        var write = new InlineURL("Написать", $"tg://resolve?phone={flat.PhoneNumber}");
+        
+        List<IInlineContent> menu = new();
+        menu.Add(write);
+        
+        var testMenu = MenuGenerator.InlineKeyboard(1, menu);
+        
+        var option = new OptionMessage
+        {
+            MenuInlineKeyboardMarkup = testMenu
+        };
+
         //Получаем текущий обработчик
         var handler = update.GetStepHandler<StepTelegram>();
         //Записываем имя пользователя в кэш 
         handler!.GetCache<StepCache>().Flat = update.Message.Text;
         //Последний шаг
         update.ClearStepUserHandler();
-        await PRTelegramBot.Helpers.Message.Send(botClient, update, msg);
+        await PRTelegramBot.Helpers.Message.Send(botClient, update, msg, option);
     }
 }

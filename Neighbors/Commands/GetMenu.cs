@@ -21,7 +21,7 @@ public class GetMenu
         var menuList = new List<KeyboardButton>();
         
         menuList.Add(new KeyboardButton("Найти соседа"));
-        menuList.Add(new KeyboardButton("Моя информация"));
+        menuList.Add(new KeyboardButton("Мои данные"));
         menuList.Add(new KeyboardButton("Статистика дома"));
         menuList.Add(new KeyboardButton("Полезная информация"));
         

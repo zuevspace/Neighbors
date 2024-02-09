@@ -6,16 +6,9 @@ class Program
 {
     static async Task Main()
     {
-        const string path = @"/Users/zuev/SourceTree/Neighbors/Neighbors/TOKEN.txt";
-        string token;
-        using (var reader = new StreamReader(path))
-        {
-            token = await reader.ReadToEndAsync();
-        }
-        
         var telegram = new PRBot(options =>
         {
-            options.Token = token;
+            options.Token = GetTokenBot.Get().Result;
             options.ClearUpdatesOnStart = true;
             options.WhiteListUsers = new List<long>() { 132493648, 663256732, 1417023281};
             options.Admins = new List<long>() { 132493648, 1417023281 };

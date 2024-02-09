@@ -11,7 +11,7 @@ public class GetHouseStatistics
     [SlashHandler("/stat")]
     public static async Task ReplyHouseStatistics(ITelegramBotClient botClient, Update update)
     {
-        var countFlat = AccessSqliteData.LoadFlat().Count;
+        var countFlat = AccessSqliteData.LoadFlatAsync().Count;
         
         var message = $"Статистика дома: {countFlat} квартир";
         await PRTelegramBot.Helpers.Message.Send(botClient, update, message);

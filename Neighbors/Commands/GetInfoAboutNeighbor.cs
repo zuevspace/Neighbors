@@ -20,16 +20,12 @@ public class GetInfoAboutNeighbor
         update.RegisterStepHandler(new StepTelegram(StepNumFlat, new StepCache()));
         await PRTelegramBot.Helpers.Message.Send(botClient, update, message);
     }
-    
-    public static async Task StepNumFlat(ITelegramBotClient botClient, Update update)
+
+    private static async Task StepNumFlat(ITelegramBotClient botClient, Update update)
     {
-        //var connString = "host=localhost;username=postgres;password=8888;database=postgres";
-        const string connectionString = "Data Source=neighbors.sqlite";
-        var repository = new FlatRepository(connectionString);
-        
         var pars = int.TryParse(update.Message.Text, out var num);
 
-        var flat = AccessSqliteData.SearchFlat(num);//repository.GetFlat(num);
+        var flat = AccessSqliteData.SearchFlatAsync(num);
         var msg = "";
         
         if (pars && flat != null)
@@ -46,11 +42,11 @@ public class GetInfoAboutNeighbor
         List<IInlineContent> menu = new();
         menu.Add(write);
         
-        var testMenu = MenuGenerator.InlineKeyboard(1, menu);
+        var writeMenu = MenuGenerator.InlineKeyboard(1, menu);
         
         var option = new OptionMessage
         {
-            MenuInlineKeyboardMarkup = testMenu
+            MenuInlineKeyboardMarkup = writeMenu
         };
 
         //Получаем текущий обработчик

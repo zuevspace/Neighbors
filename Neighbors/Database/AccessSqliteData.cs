@@ -68,6 +68,7 @@ public class AccessSqliteData
 
     private static string LoadConnectionString()
     {
-        return "Data Source=/Users/zuev/SourceTree/Neighbors/Neighbors/Database/neighbors.sqlite;Version=3";
+        var path = Path.Combine("Database", "neighbors.sqlite");
+        return $"Data Source={path};Version=3";
     } 
 }

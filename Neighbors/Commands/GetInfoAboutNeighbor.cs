@@ -30,7 +30,7 @@ public class GetInfoAboutNeighbor
         
         if (pars && flat != null)
         {
-            msg = flat.StringInfoFlat();
+            msg = flat.GetInfoAboutFlat();
         }
         else
         {

@@ -2,6 +2,7 @@ using Dapper;
 using System.Data;
 using System.Data.SQLite;
 using Telegram.Bot.Types;
+using Dapper;
 
 namespace Neighbors.Database;
 
@@ -13,31 +14,11 @@ public class AccessSqliteData
         return $"Data Source={path};Version=3";
     }
 
-    public static List<Flat>? SearchMyInfo(long id)
+    public static Flat? SearchMyInfo(long id)
     {
         using var connection = new SQLiteConnection(LoadConnectionString());
-        connection.OpenAsync();
-        var sql =
-            "SELECT number_flat, number_floors, name_lodger, phone_number FROM neighbors WHERE id_telegram = @id";
-        using var command = new SQLiteCommand(sql, connection);
-        command.Parameters.AddWithValue("@id", id);
-        
-        using var reader = command.ExecuteReader();
-
-        var flats = new List<Flat>();
-        
-        while (reader.Read())
-        {
-            var flat = new Flat
-            {
-                NumberFlat = reader.GetInt32(0),
-                NumberFloors = reader.GetInt32(1),
-                NameLodger = reader.GetString(2),
-                PhoneNumber = reader.GetString(3)
-            };
-            flats.Add(flat);
-        }
-        return flats;
+        const string selectQuery = $@"SELECT number_flat as {nameof(Flat.NumberFlat)}, number_floors as {nameof(Flat.NumberFloors)}, name_lodger as {nameof(Flat.NameLodger)}, phone_number as {nameof(Flat.PhoneNumber)} FROM neighbors WHERE id_telegram = @Id";
+        return connection.Query<Flat>(selectQuery,new { Id = id }).FirstOrDefault();
     }
     
     public static List<Flat> LoadFlatAsync()

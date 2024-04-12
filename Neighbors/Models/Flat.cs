@@ -1,18 +1,18 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.SqlTypes;
-using System.Xml;
+using Neighbors.Interface;
 
 namespace Neighbors;
 
-public class Flat
+public class Flat : IFlat
 {
-    public int NumberFlat { get; set; }
+    public int NumberFlat { get; init; }
     public int NumberFloors { get; set; }
     public string? NameLodger { get; set; }
     public string? PhoneNumber { get; set; }
-    public string StringInfoFlat()
+    public int NumberSection { get; set; }
+    public string GetInfoAboutFlat()
     {
-        return $"Имя жильца: {NameLodger}\n" +
+        return $"Имя: {NameLodger}\n" +
+               $"Подъезд: {NumberSection}\n" +
                $"Этаж: {NumberFloors}\n" +
                $"Номер квартиры: {NumberFlat}\n" +
                $"Номер телефона: {PhoneNumber}\n";

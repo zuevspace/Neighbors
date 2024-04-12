@@ -39,9 +39,8 @@ public class GetInfoAboutNeighbor
         
         var write = new InlineURL("Написать", $"tg://resolve?phone={flat.PhoneNumber}");
         
-        List<IInlineContent> menu = new();
-        menu.Add(write);
-        
+        var menu = new List<IInlineContent> { write };
+
         var writeMenu = MenuGenerator.InlineKeyboard(1, menu);
         
         var option = new OptionMessage

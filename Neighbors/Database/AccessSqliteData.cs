@@ -13,28 +13,31 @@ public class AccessSqliteData
         return $"Data Source={path};Version=3";
     }
 
-    public static Flat? SearchMyInfo(long id)
+    public static List<Flat>? SearchMyInfo(long id)
     {
         using var connection = new SQLiteConnection(LoadConnectionString());
         connection.OpenAsync();
         var sql =
             "SELECT number_flat, number_floors, name_lodger, phone_number FROM neighbors WHERE id_telegram = @id";
-        var command = new SQLiteCommand(sql, connection);
+        using var command = new SQLiteCommand(sql, connection);
         command.Parameters.AddWithValue("@id", id);
-        var reader = command.ExecuteReader();
+        
+        using var reader = command.ExecuteReader();
 
+        var flats = new List<Flat>();
+        
         while (reader.Read())
         {
-            return new Flat
+            var flat = new Flat
             {
                 NumberFlat = reader.GetInt32(0),
                 NumberFloors = reader.GetInt32(1),
                 NameLodger = reader.GetString(2),
                 PhoneNumber = reader.GetString(3)
             };
+            flats.Add(flat);
         }
-        connection.CloseAsync();
-        return null;
+        return flats;
     }
     
     public static List<Flat> LoadFlatAsync()

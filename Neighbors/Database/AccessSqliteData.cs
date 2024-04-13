@@ -1,6 +1,7 @@
 using Dapper;
 using System.Data;
 using System.Data.SQLite;
+using System.Collections.Generic;
 using Telegram.Bot.Types;
 using Dapper;
 
@@ -14,11 +15,19 @@ public class AccessSqliteData
         return $"Data Source={path};Version=3";
     }
 
-    public static Flat? SearchMyInfo(long id)
+    public static async Task<Flat?> SearchMyInfoAsync(long id)
     {
-        using var connection = new SQLiteConnection(LoadConnectionString());
+        await using var connection = new SQLiteConnection(LoadConnectionString());
         const string selectQuery = $@"SELECT number_flat as {nameof(Flat.NumberFlat)}, number_floors as {nameof(Flat.NumberFloors)}, name_lodger as {nameof(Flat.NameLodger)}, phone_number as {nameof(Flat.PhoneNumber)} FROM neighbors WHERE id_telegram = @Id";
-        return connection.Query<Flat>(selectQuery,new { Id = id }).FirstOrDefault();
+        IEnumerable<Flat?> result = await connection.QueryAsync<Flat>(selectQuery, new {Id = id});
+        return result.FirstOrDefault();
+    }
+    public static async Task<Flat?> SearchFlatAsync(int flatNumber)
+    {
+        await using var connection = new SQLiteConnection(LoadConnectionString());
+        const string selectQuery = $@"SELECT number_flat as {nameof(Flat.NumberFlat)}, number_floors as {nameof(Flat.NumberFloors)}, name_lodger as {nameof(Flat.NameLodger)}, phone_number as {nameof(Flat.PhoneNumber)} FROM neighbors WHERE number_flat = @NumberFlat";
+        IEnumerable<Flat?> result = await connection.QueryAsync<Flat>(selectQuery, new {NumberFlat = flatNumber});
+        return result.FirstOrDefault();
     }
     
     public static List<Flat> LoadFlatAsync()
@@ -47,14 +56,6 @@ public class AccessSqliteData
         
         return flats;
     }
-
-    public static Flat? SearchFlatAsync(int flatNumber)
-    {
-        using var connection = new SQLiteConnection(LoadConnectionString());
-        const string selectQuery = $@"SELECT number_flat as {nameof(Flat.NumberFlat)}, number_floors as {nameof(Flat.NumberFloors)}, name_lodger as {nameof(Flat.NameLodger)}, phone_number as {nameof(Flat.PhoneNumber)} FROM neighbors WHERE number_flat = @NumberFlat";
-        return connection.Query<Flat>(selectQuery,new { NumberFlat = flatNumber }).FirstOrDefault();
-    }
-    
     public static void InsertFlatAsync(long id, string name)
     {
         using var connection = new SQLiteConnection(LoadConnectionString());

@@ -17,8 +17,11 @@ public class GetMyInfo
     [SlashHandler("/my_info")]
     public static async Task ReplyMyInformation(ITelegramBotClient botClient, Update update)
     {
-        var myFlat = AccessSqliteData.SearchMyInfo(update.Message.Chat.Id);
-        var message = myFlat.GetInfoAboutFlat();
+        var myFlat = await AccessSqliteData.SearchMyInfoAsync(update.Message.Chat.Id);
+        var message = myFlat?.GetInfoAboutFlat();
+        if (message == null)
+            await PRTelegramBot.Helpers.Message.Send(botClient, update, "Ваших данных нет в базе.");
+            
         await PRTelegramBot.Helpers.Message.Send(botClient, update, message);
     }
 }

@@ -2,11 +2,9 @@ namespace Neighbors.Database;
 
 public class GetTokenBot
 {
-    public static async Task<string> Get()
+    public static async Task<string> GetAsync()
     {
-        var path = Path.Combine("TOKEN.txt");
-        using var reader = new StreamReader(path);
-        var token = await reader.ReadToEndAsync();
-        return token;
+        using var reader = new StreamReader(Path.Combine("TOKEN.txt"));
+        return await reader.ReadToEndAsync();
     }
 }

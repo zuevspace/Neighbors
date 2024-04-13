@@ -23,21 +23,16 @@ public class GetInfoAboutNeighbor
 
     private static async Task StepNumFlat(ITelegramBotClient botClient, Update update)
     {
-        var pars = int.TryParse(update.Message.Text, out var num);
+        var pars = int.TryParse(update.Message?.Text, out var num);
 
-        var flat = AccessSqliteData.SearchFlatAsync(num);
-        var msg = "";
+        var flat = await AccessSqliteData.SearchFlatAsync(num);
+
+        if (!pars || flat == null)
+            await PRTelegramBot.Helpers.Message.Send(botClient, update, "Квартира не найдена");
         
-        if (pars && flat != null)
-        {
-            msg = flat.GetInfoAboutFlat();
-        }
-        else
-        {
-            msg = "Квартира не найдена";
-        }
+        var msg = flat?.GetInfoAboutFlat();
         
-        var write = new InlineURL("Написать", $"tg://resolve?phone={flat.PhoneNumber}");
+        var write = new InlineURL("Написать", $"tg://resolve?phone={flat?.PhoneNumber}");
         
         var menu = new List<IInlineContent> { write };
 

@@ -1,6 +1,4 @@
-using System.Reflection.Metadata;
 using PRTelegramBot.Attributes;
-using PRTelegramBot.Core;
 using PRTelegramBot.Extensions;
 using PRTelegramBot.Models;
 using PRTelegramBot.Utils;
@@ -12,47 +10,46 @@ namespace Neighbors.Commands;
 
 public class GetMenu
 {
+    const string menuTextSelectAction = "Выберите действие:";
+    
     [ReplyMenuHandler("Меню")]
     [SlashHandler("/start")]
     public static async Task ReplyMenu(ITelegramBotClient botClient, Update update)
     {
-        var message = "Выберите действие:";
         var option = new OptionMessage();
-        var menuList = new List<KeyboardButton>();
+        var menu = new List<KeyboardButton>
+        {
+            new KeyboardButton("Найти соседа"),
+            new KeyboardButton("Мои данные"),
+            new KeyboardButton("Чат дома"),
+            new KeyboardButton("Информация")
+        };
+
+        var mainMenu = MenuGenerator.ReplyKeyboard(2, menu);
+        option.MenuReplyKeyboardMarkup = mainMenu;
         
-        menuList.Add(new KeyboardButton("Найти соседа"));
-        menuList.Add(new KeyboardButton("Мои данные"));
-        menuList.Add(new KeyboardButton("Статистика дома"));
-        menuList.Add(new KeyboardButton("Полезная информация"));
-        
-        var menu = MenuGenerator.ReplyKeyboard(2, menuList);
-        option.MenuReplyKeyboardMarkup = menu;
-        
-        await PRTelegramBot.Helpers.Message.Send(botClient, update, message, option);
+        await PRTelegramBot.Helpers.Message.Send(botClient, update, menuTextSelectAction, option);
     }
     
-    [ReplyMenuHandler("ADMIN_MENU")]
+    [ReplyMenuHandler("/admin")]
     public static async Task ReplyAdminMenu(ITelegramBotClient botClient, Update update)
     {
-        var message = "";
-        
         if (!botClient.IsAdmin(update.GetChatId()))
         {
-            message = "Вы не являетесь админом!";
-            await PRTelegramBot.Helpers.Message.Send(botClient, update, message);
+            await PRTelegramBot.Helpers.Message.Send(botClient, update, "Вы не являетесь админом!");
         }
         
-        message = "Выберите действие:";
         var option = new OptionMessage();
-        var menuList = new List<KeyboardButton>();
+        var menu = new List<KeyboardButton>
+        {
+            new KeyboardButton("Добавить соседа"),
+            new KeyboardButton("Редактировать соседа"),
+            new KeyboardButton("Удалить соседа")
+        };
+
+        var adminMenu = MenuGenerator.ReplyKeyboard(2, menu);
+        option.MenuReplyKeyboardMarkup = adminMenu;
         
-        menuList.Add(new KeyboardButton("Добавить соседа"));
-        menuList.Add(new KeyboardButton("Редактировать соседа"));
-        menuList.Add(new KeyboardButton("Удалить соседа"));
-        
-        var menu = MenuGenerator.ReplyKeyboard(2, menuList);
-        option.MenuReplyKeyboardMarkup = menu;
-        
-        await PRTelegramBot.Helpers.Message.Send(botClient, update, message, option);
+        await PRTelegramBot.Helpers.Message.Send(botClient, update, menuTextSelectAction, option);
     }
 }

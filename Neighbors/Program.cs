@@ -8,9 +8,9 @@ class Program
     {
         var telegram = new PRBot(options =>
         {
-            options.Token = GetTokenBot.Get().Result;
+            options.Token = GetTokenBot.GetAsync().Result;
             options.ClearUpdatesOnStart = true;
-            options.WhiteListUsers = new List<long>() { 132493648, 663256732, 1417023281};
+            options.WhiteListUsers = new List<long>() { 132493648, 663256732, 1417023281 };
             options.Admins = new List<long>() { 132493648, 1417023281 };
             options.BotId = 0;
         });
